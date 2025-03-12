@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+  
+  <header class="bg-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+      <div class="flex items-center space-x-4">
+        <img src="/css/image/my-logo.png" alt="Securiport Logo" class="h-10 w-auto sm:h-12 md:h-14">
+        <h1 class="text-2xl font-bold text-gray-900 sm:text-xl md:text-2xl">
+          Daily Cash Collection Report
+        </h1>
+      </div>
+    </div>
+  </header>
+
+  <main class="container mx-auto p-6 flex flex-col items-center flex-grow">
+    <div id="register-container" class="w-full max-w-4xl"></div>
+  </main>
+  
+  <footer class="bg-gray-800 text-white text-center py-4 mt-8">
+    &copy; 2025 Securiport. All rights reserved.
+  </footer>
+
+
+  <script src="{{ url_for('static', filename='header.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/components/RegisterForm.js') }}"></script>
+
+
+ <script>
+        const registerFormContainer = document.getElementById('registerFormContainer');
+        const registerForm = new RegisterForm(registerFormContainer, (username, password, role, gender, email, telephone) => {
+            fetch('/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams(new FormData({ username, password, role, gender, email, telephone })),
+            })
+            .then(response => response.text())
+            .then(data => {
+                if (data.startsWith('Username')) {
+                    alert(data);
+                } else {
+                    window.location.href = '/login';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }, () => {
+            window.location.href = '/login';
+        });
+        registerForm.render();
+    </script>
+</body>
+</html>

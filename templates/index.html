@@ -1,0 +1,239 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daily Cash Collection Report</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+  
+  <header class="bg-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+      <div class="flex items-center space-x-4">
+        <img src="/css/image/my-logo.png" alt="Securiport Logo" class="h-10 w-auto sm:h-12 md:h-14">
+        <h1 class="text-2xl font-bold text-gray-900 sm:text-xl md:text-2xl">
+          Daily Cash Collection Report
+        </h1>
+      </div>
+      <div class="flex items-center space-x-4">
+        <span class="text-gray-600 text-sm sm:text-base">Welcome, {{ username }}</span>
+        <button id="logoutBtn" class="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-150 sm:px-4 sm:py-2">
+          Logout
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container mx-auto p-6 flex flex-col items-center flex-grow">
+    <div id="app" class="w-full max-w-4xl"></div>
+    <div id="data-table-container" class="mt-8 w-full max-w-6xl"></div> 
+  </main>
+  
+  <footer class="bg-gray-800 text-white text-center py-4 mt-8">
+    &copy; 2025 Securiport. All rights reserved.
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/components/Header.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/components/DataEntryForm.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/components/DataTable.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/components/LoginForm.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/components/RegisterForm.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/components/WelcomeMessage.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const appContainer = document.getElementById("app");
+      const tableContainer = document.getElementById("data-table-container");
+
+      // Render Header
+      const headerContainer = document.querySelector("header");
+      const header = new Header(headerContainer);
+      header.render("John Doe", () => {
+        fetch('/logout', { method: 'GET' }).then(() => {
+          window.location.href = '/login';
+        });
+      });
+
+      // Render Data Entry Form
+      const dataEntryForm = new DataEntryForm(appContainer);
+      dataEntryForm.render({
+        onSubmit: async (formData) => {
+  try {
+    const response = await fetch("/submit", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+
+    const result = await response.json();
+    if (response.ok) {
+      alert("Data submitted successfully!");
+      fetchDataAndRenderTable(); // Refresh table
+    } else {
+      alert("Error: " + result.error);
+    }
+  } catch (error) {
+    alert("Failed to submit data: " + error.message);
+  }
+},
+        flights: ['Flight 1', 'Flight 2'],
+        supervisors: ['Supervisor 1', 'Supervisor 2']
+      });
+
+      // Fetch data and render table
+      async function fetchDataAndRenderTable() {
+        try {
+          const response = await fetch("/get-data");
+          const data = await response.json();
+
+          const dataTable = new DataTable(tableContainer);
+          dataTable.render({
+            data,
+            showVerification: true, // Adjust based on user role
+            onVerify: async (id, verificationData) => {
+              const verifyResponse = await fetch(`/verify/${id}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(verificationData),
+              });
+
+              if (verifyResponse.ok) {
+                alert("Verification successful!");
+                fetchDataAndRenderTable();
+              } else {
+                alert("Verification failed.");
+              }
+            },
+            onUpdate: async (id, updateData) => {
+              const updateResponse = await fetch(`/update/${id}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(updateData),
+              });
+
+              if (updateResponse.ok) {
+                alert("Update successful!");
+                fetchDataAndRenderTable();
+              } else {
+                alert("Update failed.");
+              }
+            },
+            onDownload: () => {
+              window.location.href = "/download-report";
+            },
+          });
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      }
+
+      // Initial table load
+      fetchDataAndRenderTable();
+    });
+  </script>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Cash Collection Report</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
+  
+  
+
+    <div id="headerContainer"></div>
+    <div id="loginFormContainer" class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md sm:p-8"></div>
+    <div id="formContainer"></div>
+    <div id="dataTableContainer"></div>
+
+    <script src="{{ url_for('static', filename='js/components/Header.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/components/DataEntryForm.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/components/DataTable.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/components/LoginForm.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/components/RegisterForm.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/components/WelcomeMessage.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const headerContainer = document.getElementById('headerContainer');
+            const formContainer = document.getElementById('formContainer');
+            const dataTableContainer = document.getElementById('dataTableContainer');
+            const loginFormContainer = document.getElementById('loginFormContainer');
+            const header = new Header(headerContainer);
+
+            const username = 'User123'; // Replace with actual username
+            const logout = () => {
+                console.log('Logout clicked');
+                // Implement logout logic here
+            };
+
+            header.render(username, logout);
+
+            const form = new DataEntryForm(formContainer);
+            const flights = ['Flight 1', 'Flight 2', 'Flight 3']; // Example flight data
+            const supervisors = ['Jane Smith', 'John Doe']; // Example supervisor data
+
+            form.render({
+                onSubmit: (data) => {
+                    fetch('/submit', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                        },
+                        body: new URLSearchParams(data).toString(),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Data submitted:', data);
+                        dataTable.render({ data: [...dataTable.data, data] }); // Add new data to the table
+                    })
+                    .catch(error => {
+                        console.error('Error submitting data:', error);
+                    });
+                },
+                flights: flights,
+                supervisors: supervisors
+            });
+
+            const dataTable = new DataTable(dataTableContainer);
+            const initialData = []; // Replace with actual data from the server
+            dataTable.render({ data: initialData, showVerification: true, onVerify: verifyData, onUpdate: updateData, onDownload: downloadData, canDownload: true });
+
+            function verifyData(id, data) {
+                console.log('Verifying data for ID:', id, 'Data:', data);
+                // Implement verification logic here
+            }
+
+            function updateData(id, data) {
+                console.log('Updating data for ID:', id, 'Data:', data);
+                // Implement update logic here
+            }
+
+            function downloadData(data) {
+                console.log('Downloading data:', data);
+                // Implement download logic here
+            }
+
+            const loginForm = new LoginForm(loginFormContainer, (data) => {
+                // Handle login success, e.g., redirect to dashboard
+                console.log('Login successful:', data);
+                window.location.href = '/welcome';
+            }, (error) => {
+                // Handle login failure, e.g., show error message
+                console.error('Login failed:', error);
+                alert('Invalid username or password');
+            });
+            loginForm.render();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{
+    "flights": [
+        "Brussel",
+        "Asky",
+        "Turkish Airline"
+    ],
+    "supervisors": [
+        "John Doe",
+        "Jane Smith",
+        "Bob Johnson"
+    ]
+}
